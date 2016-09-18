@@ -12,6 +12,23 @@ let paddleWidth = 70;
 let paddleX = (canvas.width - paddleWidth) / 2;
 // ^ defines where the paddle begins on x-axis
 
+//brick variables
+let brickRowCount = 3;
+let brickColumnCount = 5;
+let brickWidth = 80;
+let brickHeight = 20;
+let brickPadding = 10;
+let brickOffsetTop = 30;
+let brickOffsetLeft = 30;
+
+let bricks = [];
+for(var c=0; c<brickColumnCount; c++) {
+    bricks[c] = [];
+    for(var r=0; r<brickRowCount; r++) {
+        bricks[c][r] = { x: 0, y: 0 };
+    }
+}
+
 let leftPress = false;
 let rightPress = false;
 //key presses for event listeners
@@ -51,8 +68,25 @@ function drawPaddle() {
     ctx.closePath();
 }
 
+function drawBricks() {
+    for(var c=0; c<brickColumnCount; c++) {
+        for(var r=0; r<brickRowCount; r++) {
+            let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+            let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = "#70777A";
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+}
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBricks();
     drawBall();
     drawPaddle();
     x += dx;
@@ -66,8 +100,9 @@ function draw() {
         //if ball is on x-axis where the paddle is
             dy = -dy;
       } else {
-      alert('YOU\'RE KILLING ME SMALLS!');
-      document.location.reload();
+      // alert('YOU\'RE KILLING ME SMALLS!');
+      //change to modal
+      // document.location.reload();
     }
   }
 
@@ -92,25 +127,6 @@ setInterval(draw, 10);
 // ctx.fillStyle = "#F8B290";
 // ctx.fill();
 // ctx.closePath();
-//
-// ctx.beginPath();
-// ctx.rect(95, 40, 60, 30);
-// ctx.fillStyle = "#F8B290";
-// ctx.fill();
-// ctx.closePath();
-//
-// ctx.beginPath();
-// ctx.rect(170, 40, 60, 30);
-// ctx.fillStyle = "#F8B290";
-// ctx.fill();
-// ctx.closePath();
 
 
-
-
-//define circle/ball
-// ctx.beginPath();
-// ctx.arc(240, 160, 15, 0, Math.PI*2, false);
-// ctx.fillStyle = "#70777A";
-// ctx.fill();
-// ctx.closePath();
+//code developed with help of https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/
