@@ -2,6 +2,8 @@ let canvas = document.getElementById('myCanvas');
 let ctx = canvas.getContext('2d');
 
 //globally stored variables
+let score = 0;
+let lives = 3;
 let x = canvas.width / 2;
 let y = canvas.height - 30;
 let dx = 2;
@@ -10,6 +12,7 @@ let ballRadius = 7.5;
 let paddleHeight = 13;
 let paddleWidth = 70;
 let paddleX = (canvas.width - paddleWidth) / 2;
+let paddleY = (canvas.height - 10);
 // ^ defines where the paddle begins on x-axis
 
 //brick variables
@@ -22,10 +25,14 @@ let brickOffsetTop = 30;
 let brickOffsetLeft = 30;
 
 let bricks = [];
-for(var c=0; c<brickColumnCount; c++) {
+for (var c = 0; c < brickColumnCount; c++) {
     bricks[c] = [];
-    for(var r=0; r<brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0 };
+    for (var r = 0; r < brickRowCount; r++) {
+        bricks[c][r] = {
+            x: 0,
+            y: 0,
+            status: 1
+        };
     }
 }
 
@@ -35,6 +42,7 @@ let rightPress = false;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 function keyDownHandler(e) {
     if (e.keyCode == 39) {
@@ -52,9 +60,53 @@ function keyUpHandler(e) {
     }
 }
 
+function mouseMoveHandler(e) {
+    var relativeX = e.clientX - canvas.offsetLeft;
+    if(relativeX > 0 && relativeX < canvas.width) {
+        paddleX = relativeX - paddleWidth/2;
+    }
+}
+
+function collisionDetection() {
+    for (c = 0; c < brickColumnCount; c++) {
+        for (r = 0; r < brickRowCount; r++) {
+            var b = bricks[c][r];
+            if(b.status == 1) {
+                if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+                    dy = -dy;
+                    b.status = 0;
+                    score++;
+                    if(score === brickRowCount*brickColumnCount) {
+                    alert("YOU WIN, CONGRATULATIONS!");
+                    document.location.reload();
+                }
+                }
+            }
+        }
+    }
+}
+
+function drawScore() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("Score: "+score, 8, 20);
+}
+
+function drawLives() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("Lives: "+lives, canvas.width-65, 20);
+}
+
+function drawTitle() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("2D Breakout", 200, 20);
+}
+
 function drawBall() {
     ctx.beginPath();
-    ctx.arc(x, y, 15, ballRadius, 0, Math.PI * 2, false);
+    ctx.arc(x, y, 10, ballRadius, 0, Math.PI * 2, false);
     ctx.fillStyle = "#70777A";
     ctx.fill();
     ctx.closePath();
@@ -69,17 +121,19 @@ function drawPaddle() {
 }
 
 function drawBricks() {
-    for(var c=0; c<brickColumnCount; c++) {
-        for(var r=0; r<brickRowCount; r++) {
-            let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-            let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
-            bricks[c][r].x = brickX;
-            bricks[c][r].y = brickY;
-            ctx.beginPath();
-            ctx.rect(brickX, brickY, brickWidth, brickHeight);
-            ctx.fillStyle = "#70777A";
-            ctx.fill();
-            ctx.closePath();
+    for (var c = 0; c < brickColumnCount; c++) {
+        for (var r = 0; r < brickRowCount; r++) {
+            if (bricks[c][r].status == 1) {
+                var brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+                var brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+                bricks[c][r].x = brickX;
+                bricks[c][r].y = brickY;
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillStyle = "#70777A";
+                ctx.fill();
+                ctx.closePath();
+            }
         }
     }
 }
@@ -89,44 +143,52 @@ function draw() {
     drawBricks();
     drawBall();
     drawPaddle();
+    collisionDetection();
+    drawScore();
+    drawLives();
+    drawTitle();
     x += dx;
     y += dy;
 
     if (y + dy < ballRadius) {
         //if ball position is greater than the height of the canvas, reverse y axis movement
         dy = -dy;
-    } else if (y + dy > canvas.height-ballRadius) {
-      if(x > paddleX && x < paddleX + paddleWidth) {
-        //if ball is on x-axis where the paddle is
+    } else if (y + dy > canvas.height - ballRadius) {
+        if (x > paddleX && x < paddleX + paddleWidth) {
+            //if ball is on x-axis where the paddle is
             dy = -dy;
-      } else {
-      // alert('YOU\'RE KILLING ME SMALLS!');
-      //change to modal
-      // document.location.reload();
+        } else {
+          lives--;
+          if(!lives) {
+              alert("YOU'RE KILLING ME SMALLS");
+              document.location.reload();
+          }
+          else {
+              x = canvas.width/2;
+              y = canvas.height-30;
+              dx = 2;
+              dy = -2;
+              paddleX = (canvas.width-paddleWidth)/2;
+          }
+        }
     }
-  }
 
     if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
         //if ball position is greater than the width of the canvas, reverse x axis movement
         dx = -dx;
     }
 
-    if(rightPress && paddleX < canvas.width-paddleWidth) {
+    if (rightPress && paddleX < canvas.width - paddleWidth) {
         paddleX += 6;
-    }
-    else if(leftPress && paddleX > 0) {
+    } else if (leftPress && paddleX > 0) {
         paddleX -= 6;
     }
+    requestAnimationFrame(draw);
+    //gives control of framerate to browser rather than a static setinterval
 }
-setInterval(draw, 10);
+draw();
+// setInterval(draw, 10);
 //set interval redraws the ball so that it appears to be moving
-
-//define rectangles
-// ctx.beginPath();
-// ctx.rect(20, 40, 60, 30);
-// ctx.fillStyle = "#F8B290";
-// ctx.fill();
-// ctx.closePath();
 
 
 //code developed with help of https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/
