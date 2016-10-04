@@ -1,7 +1,11 @@
-body #myCanvas {
-  background: #F6F7F9;
-  display: block;
-  margin: 0 auto;
-  border: 5px solid #F8B290; }
+body {
+  background: lawngreen; }
+  body #myCanvas {
+    background: #F6F7F9;
+    display: block;
+    margin: 0 auto;
+    margin-top: 2rem;
+    border: 5px solid black;
+    position: relative; }
 
 /*# sourceMappingURL=main.css.map */
