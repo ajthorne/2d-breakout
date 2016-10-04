@@ -72,14 +72,14 @@ function collisionDetection() {
         for (r = 0; r < brickRowCount; r++) {
             var b = bricks[c][r];
             if(b.status == 1) {
-                if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+                if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight+25) {
                     dy = -dy;
                     b.status = 0;
                     score++;
-                    if(score === brickRowCount*brickColumnCount) {
-                    alert("YOU WIN, CONGRATULATIONS!");
-                    document.location.reload();
-                }
+                //     if(score === brickRowCount*brickColumnCount) {
+                //     alert("YOU WIN, CONGRATULATIONS!");
+                //     document.location.reload();
+                // }
                 }
             }
         }
@@ -87,21 +87,28 @@ function collisionDetection() {
 }
 
 function drawScore() {
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#0095DD";
-    ctx.fillText("Score: "+score, 8, 20);
+    ctx.font = "1.2rem Helvetica";
+    ctx.fillStyle = "limegreen";
+    ctx.fillText("Score: "+score, 8, 22);
 }
 
 function drawLives() {
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#0095DD";
-    ctx.fillText("Lives: "+lives, canvas.width-65, 20);
+    ctx.font = "1.2rem Helvetica";
+    ctx.fillStyle = "limegreen";
+    ctx.fillText("Lives: "+lives, canvas.width-75, 22);
 }
 
 function drawTitle() {
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#0095DD";
-    ctx.fillText("2D Breakout", 200, 20);
+    // ctx.shadowColor = "black";
+    // ctx.shadowOffsetX = 2;
+    // ctx.shadowOffsetY = 2;
+    // ctx.shadowBlur = 5;
+    let text = "2D Breakout"
+    ctx.font = "1.8rem Helvetica";
+    ctx.fillStyle = "gray";
+    ctx.fillText(text, 177, 30);
+    ctx.fillStyle = "limegreen";
+    ctx.fillText(text, 175, 28);
 }
 
 function drawBall() {
@@ -129,7 +136,7 @@ function drawBricks() {
                 bricks[c][r].x = brickX;
                 bricks[c][r].y = brickY;
                 ctx.beginPath();
-                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.rect(brickX, brickY + 15, brickWidth, brickHeight);
                 ctx.fillStyle = "#70777A";
                 ctx.fill();
                 ctx.closePath();
@@ -160,8 +167,8 @@ function draw() {
         } else {
           lives--;
           if(!lives) {
-              alert("YOU'RE KILLING ME SMALLS");
-              document.location.reload();
+              // alert("YOU'RE KILLING ME SMALLS");
+              // document.location.reload();
           }
           else {
               x = canvas.width/2;

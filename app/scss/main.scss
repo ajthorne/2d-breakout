@@ -1,9 +1,12 @@
 body {
+  background: lawngreen;
 
   #myCanvas {
     background: #F6F7F9;
     display: block;
     margin: 0 auto;
-    border: 5px solid #F8B290;
+    margin-top: 2rem;
+    border: 5px solid black;
+    position: relative;
   }
 }
