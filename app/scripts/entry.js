@@ -76,10 +76,10 @@ function collisionDetection() {
                     dy = -dy;
                     b.status = 0;
                     score++;
-                //     if(score === brickRowCount*brickColumnCount) {
-                //     alert("YOU WIN, CONGRATULATIONS!");
-                //     document.location.reload();
-                // }
+                    if(score === brickRowCount*brickColumnCount) {
+                    alert("YOU WIN, CONGRATULATIONS!");
+                    document.location.reload();
+                }
                 }
             }
         }
@@ -167,8 +167,8 @@ function draw() {
         } else {
           lives--;
           if(!lives) {
-              // alert("YOU'RE KILLING ME SMALLS");
-              // document.location.reload();
+              alert("YOU'RE KILLING ME SMALLS");
+              document.location.reload();
           }
           else {
               x = canvas.width/2;
